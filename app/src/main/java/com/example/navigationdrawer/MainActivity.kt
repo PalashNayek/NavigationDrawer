@@ -12,6 +12,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.example.navigationdrawer.helper.AppUtilities
+import com.example.navigationdrawer.helper.Dialogs
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,20 +58,20 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.nav_home -> {
                     actionBar!!.title = "Home Fragment"
-                    navView.getMenu().getItem(0).setChecked(true);
+                    navView.menu.getItem(0).setChecked(true);
                     loadFragment(HOME_PAGE, false, HomeFragment())
                     selectedNavItemIndex =
                         0//Toast.makeText(this, "Click home", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_message -> {
                     actionBar!!.title = "Message Fragment"
-                    navView.getMenu().getItem(1).isChecked = true;
+                    navView.menu.getItem(1).isChecked = true;
                     loadFragment(MESSAGE_PAGE, false, MessageFragment())
                     selectedNavItemIndex = 1
                 }
                 R.id.nav_sync -> {
                     actionBar!!.title = "Sync Fragment"
-                    navView.getMenu().getItem(2).isChecked = true;
+                    navView.menu.getItem(2).isChecked = true;
                     loadFragment(SYNC_PAGE, false, SyncFragment())
                     selectedNavItemIndex = 2
                 }
@@ -83,8 +85,31 @@ class MainActivity : AppCompatActivity() {
                     selectedNavItemIndex = 4
                 }
                 R.id.nav_login -> {
-                    Toast.makeText(this, "Click login", Toast.LENGTH_SHORT).show()
-                    selectedNavItemIndex = 5
+                    Dialogs.dialogYesNo(this@MainActivity,
+                        AppUtilities.fetchStringResource(this@MainActivity, R.string.logout_title),
+                        AppUtilities.fetchStringResource(this@MainActivity, R.string.logout_message),
+                        AppUtilities.fetchStringResource(this@MainActivity, R.string.dialog_positive_text),
+                        AppUtilities.fetchStringResource(this@MainActivity, R.string.dialog_negative_text),
+                        object : Dialogs.DialogActionListener {
+                            override fun onYesClick() {
+                                /*Paper.book().delete(PaperDBConstants.PAPER_IS_LOGGEDIN)
+                                Paper.clear(this@ContainerActivity)
+                                Paper.book().write(PaperDBConstants.FIRST_INSTALL, true)
+                                val intent = Intent(this@ContainerActivity, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)*/
+                                Toast.makeText(this@MainActivity, "Click yes", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onNoClick() {
+                                navView.menu.getItem(5).isChecked = false;
+                                navView.menu.getItem(selectedNavItemIndex).isChecked = true;
+                                selectedNavItemIndex = 5
+                            }
+
+                        })
+                    //Toast.makeText(this, "Click login", Toast.LENGTH_SHORT).show()
+
                 }
                 R.id.nav_share -> {
                     Toast.makeText(this, "Click share", Toast.LENGTH_SHORT).show()
